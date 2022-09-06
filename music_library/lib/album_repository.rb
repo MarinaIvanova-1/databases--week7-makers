@@ -1,5 +1,5 @@
-require 'database_connection'
-require 'album'
+require_relative './database_connection'
+require_relative './album'
 
 class AlbumRepository
   def initialize
