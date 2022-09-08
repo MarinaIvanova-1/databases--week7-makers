@@ -25,26 +25,22 @@ class Application
 
   def print_header
     @io.puts "Welcome to the music library manager!"
-    @io.puts 
     @io.puts "What would you like to do?"
   end
 
   def print_options
     @io.puts "1 - List all albums"
     @io.puts "2 - List all artists"
-    @io.puts
     @io.puts "Enter your choice:"
   end
 
   def process(selection)
     case selection
     when "1"
-      @io.puts
       @album_repository.all.each do |album|
         @io.puts "#{album.id} - #{album.title}"
       end
     when "2"
-      @io.puts
       @artist_repository.all.each do |artist|
         @io.puts "#{artist.id} - #{artist.name}"
       end
