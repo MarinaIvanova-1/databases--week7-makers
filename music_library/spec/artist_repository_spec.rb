@@ -8,9 +8,16 @@ RSpec.describe ArtistRepository do
     connection.exec(seed_sql)
   end
 
+  def reset_albums_table
+    seed_sql = File.read('spec/seeds_albums.sql')
+    connection = PG.connect({ host: '127.0.0.1', dbname: 'music_library_test' })
+    connection.exec(seed_sql)
+  end
+
   describe ArtistRepository do
     before(:each) do 
       reset_artists_table
+      reset_albums_table
     end
 
     it 'lists all artists in the repository' do
@@ -37,7 +44,16 @@ RSpec.describe ArtistRepository do
       expect(artist.id).to eq  '1'
       expect(artist.name).to eq 'Pixies'
       expect(artist.genre).to eq 'Rock'
+    end
 
+    it 'finds the artist with all its albums' do
+      repo = ArtistRepository.new
+
+      artist = repo.find_with_albums(1)
+      expect(artist.name).to eq 'Pixies'
+      expect(artist.genre).to eq 'Rock'
+      expect(artist.albums.length).to eq 2
+      expect(artist.albums.first.title).to eq 'Doolittle'
     end
   end
 end

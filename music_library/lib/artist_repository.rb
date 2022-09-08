@@ -27,4 +27,26 @@ class ArtistRepository
     return artist
     
   end
+
+  def find_with_albums(id)
+    sql = 'SELECT artists.id, artists.name, artists.genre, albums.id AS "album_id", albums.title
+              FROM artists
+              JOIN albums
+              ON artists.id = albums.artist_id
+              WHERE artists.id = $1;'
+    result_set = DatabaseConnection.exec_params(sql, [id])
+    artist = Artist.new
+    artist.id = result_set.first['id']   
+    artist.name = result_set.first['name'] 
+    artist.genre = result_set.first['genre'] 
+    result_set.each do |record|
+      album = Album.new
+      album.id = record['id']
+      album.title = record['title']
+      album.release_year = record['release_year']
+      artist.albums << album
+    end
+    return artist
+    # binding.irb 
+  end
 end
