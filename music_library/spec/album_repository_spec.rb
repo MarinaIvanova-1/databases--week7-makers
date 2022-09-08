@@ -40,6 +40,42 @@ RSpec.describe AlbumRepository do
       expect(album2.release_year).to eq '1988'
       expect(album2.artist_id).to eq '1'
     end
+
+    it 'creates a new album in the database' do
+      repo = AlbumRepository.new
+
+      album = Album.new
+      album.title = "OK computer"
+      album.release_year = 2005
+      album.artist_id = 1
+
+      repo.create(album)
+
+      expect(repo.all.last.title).to eq 'OK computer'
+      expect(repo.all.last.release_year).to eq '2005'
+      expect(repo.all.last.artist_id).to eq '1'
+    end
+
+    it 'deletes an album with a given id' do
+      repo = AlbumRepository.new
+      repo.delete(1)
+
+      album = repo.all.first
+
+      expect(repo.all.length).to eq 1
+      expect(album.id).to eq '2'
+      expect(album.title).to eq 'Surfer Rosa'
+      expect(album.release_year).to eq '1988'
+    end
+
+    it 'updates the record with given information' do
+      repo = AlbumRepository.new
+      album = repo.find(1)
+      album.title = 'Whatever'
+      repo.update(album)
+      album_updated = repo.find(1)
+      expect(album_updated.title).to eq 'Whatever'
+    end
   end
 end
 

@@ -125,6 +125,20 @@ class AlbumRepository
 
     # Returns a single Album object with a given id.
   end
+
+  def create(album)
+    # Executes the SQL query:
+    # INSERT INTO albums (title, release_year, artist_id) VALUES ('OK computer', 2005, '1') 
+
+    # Returns nothing 
+  end
+
+    def delete(id)
+    # Executes the SQL query:
+    # DELETE FROM albums WHERE id = 1 ;
+
+    # Returns nothing 
+  end
 end
 ```
 
@@ -168,6 +182,38 @@ album = repo.find(2)
 
 album.title #=> 'Surfer Rosa'
 album.release_year # => '1988'
+
+# 3
+# Creates a new album
+
+repo = AlbumRepository.new
+
+album = Album.new
+album.title = "OK computer"
+album.release_year = 2005
+album.artist_id = 1
+
+repo.create(album)
+
+repo.all.last.title #=> 'OK computer'
+repo.all.last.release_year #=> '2005'
+repo.all.last.artist_id #=> '1'
+
+
+# 4
+# Deletes an album with a given id
+
+repo = AlbumRepository.new
+repo.delete(1)
+
+album = repo.all.first
+
+repo.all.length # => 1
+albums.id # =>  '2'
+albums.title # =>  'Surfer Rosa'
+albums.release_year # =>  '1988'
+
+
 
 ```
 
