@@ -2,7 +2,7 @@ require_relative "../app"
 require 'album_repository'
 require 'artist_repository'
 
-RSpec.describe AlbumRepository do
+RSpec.describe Application do
   def reset_artists_table
     seed_sql = File.read('spec/seeds_artists.sql')
     connection = PG.connect({ host: '127.0.0.1', dbname: 'music_library_test' })
@@ -15,7 +15,7 @@ RSpec.describe AlbumRepository do
     connection.exec(seed_sql)
   end
 
-  describe ArtistRepository do
+  describe Application do
     before(:each) do 
       reset_artists_table
       reset_albums_table
