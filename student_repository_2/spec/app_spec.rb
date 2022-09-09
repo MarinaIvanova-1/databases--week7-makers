@@ -17,10 +17,10 @@ RSpec.describe Application do
       expect(io).to receive(:puts).with("Welcome to the student directory")
       expect(io).to receive(:puts).with("Which cohort would you like to print?")
       expect(io).to receive(:gets).and_return("1")
-      # # expect(io).to receive(:puts).with("April 2022 cohort, starting date 2022-04-15")
-      # # expect(io).to receive(:puts).with("Students in this cohort:")
-      # # expect(io).to receive(:puts).with("1. David")
-      # # expect(io).to receive(:puts).with("2. Anna")
+      expect(io).to receive(:puts).with("April 2022 cohort, starting date 2022-04-15")
+      expect(io).to receive(:puts).with("Students in this cohort:")
+      expect(io).to receive(:puts).with("1. David")
+      expect(io).to receive(:puts).with("2. Anna")
       app = Application.new('student_directory_2', io, CohortRepository.new)
       app.run
     end

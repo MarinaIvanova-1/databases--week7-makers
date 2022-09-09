@@ -12,7 +12,6 @@ class CohortRepository
 
     result_set = DatabaseConnection.exec_params(sql, [id])
     cohort = Cohort.new
-    # binding.irb
     cohort.name = result_set.first['cohort_name']
     cohort.id = result_set.first['id']
     cohort.starting_date = result_set.first['starting_date']
@@ -21,7 +20,6 @@ class CohortRepository
       student.name = record['students_name']
       cohort.students << student
     end
-    # binding.irb
     return cohort
   end
 end

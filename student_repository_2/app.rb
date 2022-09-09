@@ -11,15 +11,22 @@ class Application
   end
 
   def run
+    print_header
+    print_cohort_with_students(@io.gets.chomp)    
+  end
+
+  def print_header
     @io.puts "Welcome to the student directory"
     @io.puts "Which cohort would you like to print?"
-    cohort_id = @io.gets.chomp
-    cohort =  @cohort_repository.find_with_students(cohort_id)
-    puts "#{cohort.name} cohort, starting date #{cohort.starting_date}"
-    puts "Students in this cohort:"
+  end
+
+  def print_cohort_with_students(id)    
+    cohort =  @cohort_repository.find_with_students(id)
+    @io.puts "#{cohort.name} cohort, starting date #{cohort.starting_date}"
+    @io.puts "Students in this cohort:"
     num = 1
     cohort.students.each do |student|
-      puts "#{num}. #{student.name}"
+      @io.puts "#{num}. #{student.name}"
       num +=1
     end
   end
