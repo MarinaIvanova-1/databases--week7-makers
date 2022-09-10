@@ -7,6 +7,8 @@ RSpec.describe AlbumRepository do
     connection = PG.connect({ host: '127.0.0.1', dbname: 'music_library_test' })
     connection.exec(seed_sql)
   end
+
+  
   
   describe AlbumRepository do
     before(:each) do 

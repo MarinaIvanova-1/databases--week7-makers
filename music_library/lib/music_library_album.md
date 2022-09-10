@@ -133,9 +133,17 @@ class AlbumRepository
     # Returns nothing 
   end
 
-    def delete(id)
+  def delete(id)
     # Executes the SQL query:
     # DELETE FROM albums WHERE id = 1 ;
+
+    # Returns nothing 
+  end
+
+
+  def update(album)
+    # Executes the SQL query:
+    # UPDATE albums SET title = album.title, release_tear = album.release_year, artist_id = album.artist_id  WHERE id = $1;
 
     # Returns nothing 
   end
@@ -212,6 +220,14 @@ repo.all.length # => 1
 albums.id # =>  '2'
 albums.title # =>  'Surfer Rosa'
 albums.release_year # =>  '1988'
+
+# 4
+# Updates an album with given information
+
+repo = AlbumRepository.new
+album = repo.find(1)
+album.title = 'Whatever'
+repo.update(album)
 
 
 

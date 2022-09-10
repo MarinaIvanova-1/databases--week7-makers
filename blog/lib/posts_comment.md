@@ -1,4 +1,4 @@
-# Music Library Model and Repository Classes Design Recipe
+# {{TABLE NAME}} Model and Repository Classes Design Recipe
 
 _Copy this recipe template to design and implement Model and Repository classes for a database table._
 
@@ -16,7 +16,7 @@ Otherwise, [follow this recipe to design and create the SQL schema for your tabl
 Table: students
 
 Columns:
-id | name | genre
+id | name | cohort_name
 ```
 
 ## 2. Create Test SQL seeds
@@ -27,7 +27,7 @@ If seed data is provided (or you already created it), you can skip this step.
 
 ```sql
 -- EXAMPLE
--- (file: spec/seeds_artists.sql)
+-- (file: spec/seeds_{table_name}.sql)
 
 -- Write your SQL seed here. 
 
@@ -35,20 +35,19 @@ If seed data is provided (or you already created it), you can skip this step.
 -- so we can start with a fresh state.
 -- (RESTART IDENTITY resets the primary key)
 
-TRUNCATE TABLE artists RESTART IDENTITY; -- replace with your own table name.
+TRUNCATE TABLE students RESTART IDENTITY; -- replace with your own table name.
 
 -- Below this line there should only be `INSERT` statements.
 -- Replace these statements with your own seed data.
 
-INSERT INTO artists (name, genre) VALUES ('Pixies', 'Rock');
-INSERT INTO artists (name, genre) VALUES ('ABBA', 'Pop');
-
+INSERT INTO students (name, cohort_name) VALUES ('David', 'April 2022');
+INSERT INTO students (name, cohort_name) VALUES ('Anna', 'May 2022');
 ```
 
 Run this SQL file on the database to truncate (empty) the table, and insert the seed data. Be mindful of the fact any existing records in the table will be deleted.
 
 ```bash
-psql -h 127.0.0.1 music_library_test < seeds_artists.sql
+psql -h 127.0.0.1 your_database_name < seeds_{table_name}.sql
 ```
 
 ## 3. Define the class names
@@ -60,13 +59,13 @@ Usually, the Model class name will be the capitalised table name (single instead
 # Table name: students
 
 # Model class
-# (in lib/artist.rb)
-class Artist
+# (in lib/student.rb)
+class Student
 end
 
 # Repository class
-# (in lib/artist_repository.rb)
-class ArtistRepository
+# (in lib/student_repository.rb)
+class StudentRepository
 end
 ```
 
@@ -76,22 +75,24 @@ Define the attributes of your Model class. You can usually map the table columns
 
 ```ruby
 # EXAMPLE
-# Table name: artists
+# Table name: students
 
 # Model class
-# (in lib/artist.rb)
+# (in lib/student.rb)
 
-class Artist
+class Student
 
   # Replace the attributes by your own columns.
-  attr_accessor :id, :name, :genre
+  attr_accessor :id, :name, :cohort_name
 end
 
 # The keyword attr_accessor is a special Ruby feature
 # which allows us to set and get attributes on an object,
 # here's an example:
 #
-
+# student = Student.new
+# student.name = 'Jo'
+# student.name
 ```
 
 *You may choose to test-drive this class, but unless it contains any more logic than the example above, it is probably not needed.*
@@ -103,33 +104,18 @@ Your Repository class will need to implement methods for each "read" or "write" 
 Using comments, define the method signatures (arguments and return value) and what they do - write up the SQL queries that will be used by each method.
 
 ```ruby
-# EXAMPLE
-# Table name: artists
+class PostRepository
 
-# Repository class
-# (in lib/artists_repository.rb)
-
-class ArtistRepository
-
-  # Selecting all records
-  # No arguments
-  def all
-    # Executes the SQL query:
-    # SELECT id, name, genre FROM artists;
-
-    # Returns an array of Artist objects.
-  end
-
-  ###
-
-  def find_with_albums(id)
-    # Executes the SQL query:
-    # SELECT artists.id, artists.name, artists.genre, albums.id AS "album_id", albums.title
-        # FROM artists
-        # JOIN albums
-        # ON artists.id = albums.artist_id
-        # WHERE artists.id = $1;
-  end
+  # takes one argument - post id
+  def post_with_comments(id)
+    # Runs sql query
+      # SELECT posts.id AS "post_id", posts.title, posts.content AS "post_content", 
+          # comments.id AS "comment_id", comments.content "comment_content",  comments.author
+          # FROM posts
+          # JOIN comments ON posts.id = comments.post_id
+          # WHERE posts.id = $1;
+    # returns a single post object with its comments
+    end
 end
 ```
 
@@ -142,33 +128,17 @@ These examples will later be encoded as RSpec tests.
 ```ruby
 # EXAMPLES
 
-# 1
-# Get all Artists
 
-repo = ArtistRepository.new
 
-artists = repo.all
+repo = PostRepository.new
 
-artists.length # =>  2
+post = repo.find_with_comments('1')
 
-artists[0].id # =>  1
-artists[0].name # =>  'Pixies'
-artists[0].genre # =>  'Rock'
+post.title # => "My first post"
+post.content # => "My first content"
 
-artists[1].id # =>  2
-artists[1].name # =>  'ABBA'
-artists[1].genre # =>  'Pop'
-
-#2
-#Get the artist with all its albums
-
-repo = ArtistRepository.new
-
-artist = repo.find_with_albums(id)
-artist.name # => 'Pixies'
-artist.genre #=> 'Rock'
-artist.albums.length #=> 2
-artist.albums.first.name #=> 'Doolittle'
+post.comments.length # => 2
+post.comment.first.content #=> "My first comment"
 
 ```
 
@@ -183,17 +153,17 @@ This is so you get a fresh table contents every time you run the test suite.
 ```ruby
 # EXAMPLE
 
-# file: spec/aertist_repository_spec.rb
 
-def reset_artists_table
-  seed_sql = File.read('spec/seeds_artists.sql')
-  connection = PG.connect({ host: '127.0.0.1', dbname: 'music_library_test' })
+
+def reset_posts_table
+  seed_sql = File.read('spec/seeds.sql')
+  connection = PG.connect({ host: '127.0.0.1', dbname: 'blog_test' })
   connection.exec(seed_sql)
 end
 
-describe ArtistRepository do
+describe PostRepository do
   before(:each) do 
-    reset_artists_table
+    reset_posts_table
   end
 
   # (your tests will go here).
@@ -201,9 +171,3 @@ end
 ```
 
 ## 8. Test-drive and implement the Repository class behaviour
-
-_After each test you write, follow the test-driving process of red, green, refactor to implement the behaviour._
-
-<!-- BEGIN GENERATED SECTION DO NOT EDIT -->
-
----
